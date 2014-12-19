@@ -1,0 +1,4 @@
+﻿
+CREATE USER [MeDriAnchorUser] WITHOUT LOGIN
+    WITH DEFAULT_SCHEMA = [MeDriAnchor];
+

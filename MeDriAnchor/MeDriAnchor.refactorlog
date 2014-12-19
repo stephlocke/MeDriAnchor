@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="5dc129f8-30da-40b5-9305-bc8b55c76866" ChangeDateTime="10/09/2014 10:07:39">
+    <Property Name="ElementName" Value="[MeDriAnchor].[amsp_GenerateSourceSynonyms]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[MeDriAnchor]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sspGenerateSourceSynonyms]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a6a1418a-4f27-407b-a30f-9efb503f7c17" ChangeDateTime="10/09/2014 10:08:06">
+    <Property Name="ElementName" Value="[MeDriAnchor].[amsp_GenerateDWHSynonyms]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[MeDriAnchor]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sspGenerateDWHSynonyms]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="91b3ee04-d681-4d5f-93cf-5b29adca5a79" ChangeDateTime="11/24/2014 09:01:40">
+    <Property Name="ElementName" Value="[MeDriAnchor].[Batch].[BatchSuccessfull]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[MeDriAnchor].[Batch]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BatchSuccessful" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b18c3883-e017-4849-88fd-4eb57332d240" ChangeDateTime="11/24/2014 09:42:14">
+    <Property Name="ElementName" Value="[MeDriAnchor].[ETLRun].[ETLRun_ID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[MeDriAnchor].[ETLRun]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ETLRun_ID_Used" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="cddf1471-b28e-47b8-bc88-29cb730de50f" ChangeDateTime="11/27/2014 13:25:10">
+    <Property Name="ElementName" Value="[MeDriAnchor].[EventAlerts].[RowsInserted]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[MeDriAnchor].[EventAlerts]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RecordsInserted" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="27b081ed-fa6c-489b-8c7c-c68fb2c6abf6" ChangeDateTime="12/02/2014 16:53:44">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTest].[DBTableColumnTestName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DBTableColumnTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TestName" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c4e14e22-e3e6-4386-a97d-f1fe4b58b6b2" ChangeDateTime="12/02/2014 16:53:45">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTest].[DBTableColumnTestType]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DBTableColumnTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TestType" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b4d9cfc9-979b-4b56-a5ac-b5c4e4ec8cca" ChangeDateTime="12/02/2014 16:53:48">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTest].[DBTableColumnTestValue1]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DBTableColumnTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TestValue1" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f3b079c6-ad9d-409b-8bad-47e496c33e0b" ChangeDateTime="12/02/2014 16:53:51">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTest].[DBTableColumnTestValue2]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DBTableColumnTest]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TestValue2" />
+  </Operation>
+  <Operation Name="Move Schema" Key="48424e20-2578-4557-9469-b4539893e975" ChangeDateTime="12/09/2014 08:38:10">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTest]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="MeDriAnchor" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="e8f28fbf-539c-41c2-8702-bab4e866efb0" ChangeDateTime="12/09/2014 08:38:21">
+    <Property Name="ElementName" Value="[dbo].[DBTableColumnTests]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="MeDriAnchor" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="d9380fc1-078c-4ab9-97d8-5f409c79491d" ChangeDateTime="12/11/2014 15:55:23">
+    <Property Name="ElementName" Value="[dbo].[sspAddKnot]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="NewSchema" Value="MeDriAnchor" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+</Operations>
