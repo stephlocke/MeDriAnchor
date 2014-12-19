@@ -7,6 +7,27 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DWH", "DWH\DWH.sqlproj", "{
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MeDriAnchor", "MeDriAnchor\MeDriAnchor.sqlproj", "{CD475AA0-6CD8-4A99-8779-A090D6F80B1D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{2EAF604A-3F29-4208-8C7D-9EAF9454BA0D}"
+	ProjectSection(SolutionItems) = preProject
+		Alerting.md = Alerting.md
+		Anchors.md = Anchors.md
+		Architecture.md = Architecture.md
+		Attributes.md = Attributes.md
+		Auditing.md = Auditing.md
+		Changes.md = Changes.md
+		Dependencies.md = Dependencies.md
+		DESCRIPTION.md = DESCRIPTION.md
+		ETL.md = ETL.md
+		Gateways.md = Gateways.md
+		NEWS.md = NEWS.md
+		PostDeploymentScripts.md = PostDeploymentScripts.md
+		QualityTests.md = QualityTests.md
+		README.md = README.md
+		Scheduling.md = Scheduling.md
+		Sources.md = Sources.md
+		Troubleshooting.md = Troubleshooting.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
