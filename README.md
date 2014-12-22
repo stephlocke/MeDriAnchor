@@ -1,4 +1,6 @@
-# MeDriAnchor
+MeDriAnchor
+===========
+
 MeDriAnchor is the (Me)tadata (Dri)ven (Anchor) Model data warehouse system and 
 is pronounced Me-Dry-Anchor. 
 
