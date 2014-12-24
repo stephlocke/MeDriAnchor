@@ -30,3 +30,8 @@ materialised joins
 impact is quite minimal unless you are making schema extensions every load
 * The stored procs are all standardised and written with incremental load performance in mind
 * The atomic nature of the model means that parallelisation is possible within types
+
+## What's happening with it?
+Any bugs / issues / requests will be raised on github. Our plans improvements, stated fixes
+etc will all be added to our Trello board to provide more details.
+https://trello.com/b/VCsx08oy/medrianchor
