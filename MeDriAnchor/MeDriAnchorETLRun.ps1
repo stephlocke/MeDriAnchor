@@ -441,6 +441,31 @@ function runCROWETL($medrianchordbname, $medrianchordbserver, $environment, $deb
 	        throw $errorMsg;
         }
 
+		# And the source synonyms
+		try 
+		{ 
+			$SqlCmdMaint3 = New-Object System.Data.SqlClient.SqlCommand("[MeDriAnchor].[sspGenerateSourceSynonyms]", $sqlConnectionMeDriAnchorDB); 
+			$SqlCmdMaint3.CommandType = [System.Data.CommandType]'StoredProcedure' 
+			$SqlCmdMaint3.Parameters.Add("@Debug", [System.Data.SqlDbType]"Bit") >> $null; 
+			$SqlCmdMaint3.Parameters["@Debug"].Value = [Byte]$debug; 
+			$SqlCmdMaint3.CommandTimeout = 600; 
+			$result = $SqlCmdMaint3.ExecuteScalar(); 
+
+			$SqlCmdEventAlert.CommandText = "INSERT INTO [MeDriAnchor].[EventAlerts]([Batch_ID], [SeverityID], [AlertMessage]) VALUES (" + $batchid.ToString() + ", 1, 'Created the DWH source synonyms');"; 
+			$SqlCmdEventAlert.Connection = $sqlConnectionMeDriAnchorDB; 
+			$SqlCmdEventAlert.ExecuteNonQuery() >> $null; 
+		} 
+		catch 
+		{ 
+			$SqlCmdEventAlert.CommandText = "INSERT INTO [MeDriAnchor].[EventAlerts]([Batch_ID], [SeverityID], [AlertMessage]) VALUES (" + $batchid.ToString() + ", 5, 'Failed to create the DWH source synonyms');"; 
+			$SqlCmdEventAlert.Connection = $sqlConnectionMeDriAnchorDB; 
+			$SqlCmdEventAlert.ExecuteNonQuery() >> $null; 
+
+			# throw a fatal error if we can't connect to do anything
+			$errorMsg = "Error running the sspGenerateSourceSynonyms procedure. Error: " + $_.Exception.ToString() 
+			throw $errorMsg; 
+		}
+
         #########################################################################################################################
         ## STEP 5.7: GENERATING DWH INDEXES
         #########################################################################################################################
