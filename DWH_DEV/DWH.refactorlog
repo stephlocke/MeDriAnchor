@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Move Schema" Key="3681d334-750f-41ab-969c-81206b78a48f" ChangeDateTime="12/12/2014 11:21:08">
+    <Property Name="ElementName" Value="[DwhDev].[_Schema]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="fee5f725-e79d-4c7b-b928-8955518b4696" ChangeDateTime="12/12/2014 11:21:27">
+    <Property Name="ElementName" Value="[DwhDev].[_Anchor]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="bf46ce4b-d557-4caf-9e8d-1ea52b381359" ChangeDateTime="12/12/2014 11:21:40">
+    <Property Name="ElementName" Value="[DwhDev].[_Attribute]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="cd8c11ac-b0f2-49a8-b894-bd73a036a459" ChangeDateTime="12/12/2014 11:21:53">
+    <Property Name="ElementName" Value="[DwhDev].[_Knot]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="d1219fdd-aa2b-48d8-9885-c21ed8c69291" ChangeDateTime="12/12/2014 11:22:07">
+    <Property Name="ElementName" Value="[DwhDev].[_Tie]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+  <Operation Name="Move Schema" Key="6417da1f-f373-4a6c-843a-131f7735df3d" ChangeDateTime="12/12/2014 11:22:25">
+    <Property Name="ElementName" Value="[DwhDev].[_Schema_Expanded]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="NewSchema" Value="Dwh" />
+    <Property Name="IsNewSchemaExternal" Value="False" />
+  </Operation>
+</Operations>

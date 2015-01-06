@@ -36,7 +36,7 @@ BEGIN TRY
 	INNER JOIN [MeDriAnchor].[DBServer] s
 		ON db.[DBServerID] = s.[DBServerID]
 	WHERE db.[DBIsDestination] = 1
-		AND (db.[Environment_ID] IS NULL OR db.[Environment_ID] = @Environment_ID);
+		AND (db.[Environment_ID] = @Environment_ID OR db.[Environment_ID] IS NULL);
 	
 	SET @SQL += 'CREATE VIEW ' + QUOTENAME(@encapsulation) + '.[_AnchorObjects]' + CHAR(13);
 	SET @SQL += 'AS' + CHAR(13);
@@ -53,10 +53,10 @@ BEGIN TRY
 	SET @SQL += 'returns: Anchor object type and name' + CHAR(13);
 	SET @SQL += '**/' + CHAR(13);
 
-	SET @SQL += 'SELECT ''KN'' AS [Type], [name], [mnemonic] AS [KnotMnemonic], '''' AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], '''' AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Knot] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
-	SET @SQL += 'SELECT ''AN'' AS [Type], [name], '''' AS [KnotMnemonic], [mnemonic] AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], '''' AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Anchor] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
-	SET @SQL += 'SELECT ''AT'' AS [Type], [name], '''' AS [KnotMnemonic], [anchorMnemonic] AS [AnchorMnemonic], [mnemonic] AS [AttributeMnemonic], '''' AS [TieMnemonic], ISNULL([knotRange], '''') AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Attribute] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
-	SET @SQL += 'SELECT ''TI'' AS [Type], [name], '''' AS [KnotMnemonic], [anchors] AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], [knots] AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Tie] WHERE [name] IS NOT NULL;' + CHAR(13);
+	SET @SQL += 'SELECT ''KN'' AS [Type], [capsule], [name], [mnemonic] AS [KnotMnemonic], '''' AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], '''' AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Knot] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
+	SET @SQL += 'SELECT ''AN'' AS [Type], [capsule], [name], '''' AS [KnotMnemonic], [mnemonic] AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], '''' AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Anchor] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
+	SET @SQL += 'SELECT ''AT'' AS [Type], [capsule], [name], '''' AS [KnotMnemonic], [anchorMnemonic] AS [AnchorMnemonic], [mnemonic] AS [AttributeMnemonic], '''' AS [TieMnemonic], ISNULL([knotRange], '''') AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Attribute] WHERE [name] IS NOT NULL UNION ALL' + CHAR(13);
+	SET @SQL += 'SELECT ''TI'' AS [Type], [capsule], [name], '''' AS [KnotMnemonic], [anchors] AS [AnchorMnemonic], '''' AS [AttributeMnemonic], '''' AS [TieMnemonic], [knots] AS [KnotRange] FROM ' + @DestinationDB + '.' +  QUOTENAME(@encapsulation) + '.[_Tie] WHERE [name] IS NOT NULL;' + CHAR(13);
 
 	IF (@Debug = 0)
 	BEGIN

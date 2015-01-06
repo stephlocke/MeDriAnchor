@@ -1,4 +1,4 @@
-﻿CREATE PROC [MeDriAnchor].[sspGenerateDWHSynonyms](@Debug BIT = 0, @Environment_ID SMALLINT = 3)
+﻿CREATE PROC [MeDriAnchor].[sspGenerateDWHSynonyms](@Environment_ID SMALLINT, @Debug BIT = 0)
 AS
 SET NUMERIC_ROUNDABORT OFF;
 
@@ -14,6 +14,20 @@ BEGIN TRY
 	DECLARE @annexSuffix NVARCHAR(100);
 	DECLARE @DestinationServer SYSNAME;
 	DECLARE @DestinationDB SYSNAME;
+	DECLARE @ViewSQL NVARCHAR(MAX) = '';
+
+	-- Temp table to hold the appropriate environment view results
+	CREATE TABLE #_AnchorObjects
+		(
+		[Type] VARCHAR(2) NOT NULL,
+		[capsule] VARCHAR(MAX) NULL,
+		[name] NVARCHAR(MAX) NULL,
+		[KnotMnemonic] NVARCHAR(MAX) NULL,
+		[AnchorMnemonic] NVARCHAR(MAX) NULL,
+		[AttributeMnemonic] NVARCHAR(MAX) NULL,
+		[TieMnemonic] NVARCHAR(MAX) NULL,
+		[KnotRange] NVARCHAR(MAX) NULL,
+		);
 
 	SELECT	@DestinationServer = s.[ServerName],
 			@DestinationDB = db.[DBName]
@@ -21,7 +35,7 @@ BEGIN TRY
 	INNER JOIN [MeDriAnchor].[DBServer] s
 		ON db.[DBServerID] = s.[DBServerID]
 	WHERE db.[DBIsDestination] = 1
-		AND (db.[Environment_ID] IS NULL OR db.[Environment_ID] = @Environment_ID);
+		AND (db.[Environment_ID] = @Environment_ID OR db.[Environment_ID] IS NULL);
 
 	SELECT	@encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
 			@temporalization = MAX(CASE WHEN s.[SettingKey] = 'temporalization' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
@@ -33,31 +47,38 @@ BEGIN TRY
 		AND se.Environment_ID = @Environment_ID
 	WHERE s.[SettingKey] IN('encapsulation', 'temporalization', 'positSuffix', 'annexSuffix');
 
+	-- populate the view data (for the correct environment)
+	SET @ViewSQL += 'SELECT [Type], [capsule], [name], [KnotMnemonic], [AnchorMnemonic], [AttributeMnemonic], [TieMnemonic],';
+	SET @ViewSQL += '[KnotRange] FROM [' + @encapsulation + '].[_AnchorObjects];';
+
+	INSERT INTO #_AnchorObjects
+	EXEC (@ViewSQL);
+
 	SELECT	@SQL += 'IF NOT EXISTS(SELECT * FROM sys.Synonyms WHERE [name] = N''' + @DestinationDB + '_' + @encapsulation + '_' + [name] + ''')' + CHAR(10) +
 		+ 'BEGIN CREATE SYNONYM [' + @DestinationDB + '_' + @encapsulation + '_' + [name] + '] FOR '
-		+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + @encapsulation + '].[' + [name] + '] END;' + CHAR(10)
-	FROM [MeDriAnchor].[Dwh].[_AnchorObjects]
+		+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + [capsule] + '].[' + [name] + '] END;' + CHAR(10)
+	FROM #_AnchorObjects
 	WHERE [Type] NOT IN('AT', 'TI');
 
 	IF (@temporalization = 'crt')
 	BEGIN
 		SELECT	@SQL += 'IF NOT EXISTS(SELECT * FROM sys.Synonyms WHERE [name] = N''' + @DestinationDB + '_' + @encapsulation + '_' + [name] + '_' + @positSuffix + ''')' + CHAR(10) +
 			+ 'BEGIN CREATE SYNONYM [' + @DestinationDB + '_' + @encapsulation + '_' + [name] + '_' + @positSuffix + '] FOR '
-			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + @encapsulation + '].[' + [name] + '_' + @positSuffix + '] END;' + CHAR(10)
-		FROM [MeDriAnchor].[Dwh].[_AnchorObjects]
+			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + [capsule] + '].[' + [name] + '_' + @positSuffix + '] END;' + CHAR(10)
+		FROM #_AnchorObjects
 		WHERE [Type] IN('AT', 'TI');
 		SELECT	@SQL += 'IF NOT EXISTS(SELECT * FROM sys.Synonyms WHERE [name] = N''' + @DestinationDB + '_' + @encapsulation + '_' + [name] + '_' + @annexSuffix + ''')' + CHAR(10) +
 			+ 'BEGIN CREATE SYNONYM [' + @DestinationDB + '_' + @encapsulation + '_' + [name]  + '_' + @annexSuffix + '] FOR '
-			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + @encapsulation + '].[' + [name] + '_' + @annexSuffix + '] END;' + CHAR(10)
-		FROM [MeDriAnchor].[Dwh].[_AnchorObjects]
+			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + [capsule] + '].[' + [name] + '_' + @annexSuffix + '] END;' + CHAR(10)
+		FROM #_AnchorObjects
 		WHERE [Type] IN('AT', 'TI');
 	END
 	ELSE
 	BEGIN
 		SELECT	@SQL += 'IF NOT EXISTS(SELECT * FROM sys.Synonyms WHERE [name] = N''' + @DestinationDB + '_' + @encapsulation + '_' + [name] + ''')' + CHAR(10) +
 			+ 'BEGIN CREATE SYNONYM [' + @DestinationDB + '_' + @encapsulation + '_' + [name] + '] FOR '
-			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + @encapsulation + '].[' + [name] + '] END;' + CHAR(10)
-		FROM [MeDriAnchor].[Dwh].[_AnchorObjects]
+			+ '[' + @DestinationServer + '].[' + @DestinationDB + '].[' + [capsule] + '].[' + [name] + '] END;' + CHAR(10)
+		FROM #_AnchorObjects
 		WHERE [Type] IN('AT', 'TI');
 	END
 

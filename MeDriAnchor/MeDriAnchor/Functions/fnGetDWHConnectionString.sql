@@ -15,6 +15,6 @@ BEGIN
 	INNER JOIN [MeDriAnchor].[DB] db
 		ON s.[DBServerID] = db.[DBServerID]
 	WHERE db.[DBIsDestination] = 1
-		AND (db.[Environment_ID] IS NULL OR db.[Environment_ID] = @Environment_ID));
+		AND (db.[Environment_ID] = @Environment_ID OR db.[Environment_ID] IS NULL));
 
 END

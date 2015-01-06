@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [MeDriAnchor].[fnGetKnotETLMetadata]
+﻿CREATE FUNCTION [MeDriAnchor].[fnGetKnotETLMetadata]
 (
 @KnotName SYSNAME,
 @Environment_ID SMALLINT
@@ -31,7 +30,8 @@ BEGIN
 
 	SELECT @DestinationDB = [DBName]
 	FROM [MeDriAnchor].[DB]
-	WHERE [DBIsDestination] = 1;
+	WHERE [DBIsDestination] = 1
+		AND ([Environment_ID] = @Environment_ID OR [Environment_ID] IS NULL);
 
 	SELECT	@metadataPrefix = MAX(CASE WHEN s.[SettingKey] = 'metadataPrefix' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
 			@encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
@@ -65,7 +65,7 @@ BEGIN
 	WHERE tc.[IsKnot] = 1
 		AND [IdentityColumn] = 0
 		AND tc.[KnotMnemonic] + '_' + COALESCE(NULLIF(tc.[DBTableColumnAlias], ''), tc.[DBTableColumnName])  = @KnotName
-		AND tc.[Environment_ID] = @Environment_ID
+		AND tc.[Environment_ID] >= @Environment_ID
 	UNION ALL
 	SELECT	db.[DBName],
 			tc.[DBTableColumnID], 
@@ -94,7 +94,7 @@ BEGIN
 	WHERE tc.[IsKnot] = 1
 		AND tc.[IdentityColumn] = 1
 		AND tc.[KnotMnemonic] + '_' + COALESCE(NULLIF(kmtc.[DBTableColumnAlias], ''), kmtc.[DBTableColumnName]) = @KnotName
-		AND tc.[Environment_ID] = @Environment_ID
+		AND tc.[Environment_ID] >= @Environment_ID
 	ORDER BY 9 DESC, 10, 5;
 	
 	RETURN;

@@ -40,5 +40,11 @@ SELECT [DBTableColumnID]
       ,[IsActive]
   FROM [MeDriAnchor].[DBTableColumn]
   WHERE (([IsAnchor] = 1 OR [IsAttribute] = 1 OR [IsKnot] = 1
-	OR ISNULL([KnotMnemonic], '') <> '' OR ISNULL([AttributeMnemonic], '') <> '' OR ISNULL([AnchorMnemonic], '') <>''
-	OR ISNULL([AnchorMnemonicRef], '') <> '' OR ISNULL( [AttributeMnemonicRef], '') <> ''));
+	OR [KnotMnemonic] <> '' OR [AttributeMnemonic] <> '' OR [AnchorMnemonic] <>''
+	OR [AnchorMnemonicRef] <> '' OR [AttributeMnemonicRef] <> ''))
+	OR ([DBTableColumnID] IN
+	  (
+	  SELECT [DBTableColumnID]
+	  FROM [MeDriAnchor].[DBTableColumn]
+	  )
+	);

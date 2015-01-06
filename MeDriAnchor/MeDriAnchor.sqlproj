@@ -25,7 +25,7 @@
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
     <AnsiNulls>True</AnsiNulls>
-    <QuotedIdentifier>False</QuotedIdentifier>
+    <QuotedIdentifier>True</QuotedIdentifier>
     <DelayedDurability>DISABLED</DelayedDurability>
     <MemoryOptimizedElevateToSnapshot>False</MemoryOptimizedElevateToSnapshot>
     <Containment>None</Containment>
@@ -55,7 +55,7 @@
     <AnsiNullDefault>False</AnsiNullDefault>
     <AnsiPadding>False</AnsiPadding>
     <AnsiWarnings>True</AnsiWarnings>
-    <ArithAbort>False</ArithAbort>
+    <ArithAbort>True</ArithAbort>
     <ConcatNullYieldsNull>False</ConcatNullYieldsNull>
     <NumericRoundAbort>False</NumericRoundAbort>
     <RecursiveTriggersEnabled>False</RecursiveTriggersEnabled>
@@ -409,7 +409,6 @@
     <Build Include="Security\DwhUAT.sql" />
     <Build Include="Security\MeDriAnchor.sql" />
     <Build Include="Security\Permissions.sql" />
-    <None Include="PostDeploy\03PopulateMeDriAnchorAGateway.sql" />
     <Build Include="MeDriAnchor\Tables\SeverityEmailRecipients_Shadow.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -463,10 +462,10 @@
     <Build Include="Storage\Filegroup\MeDriAnchor_Current.sql" />
     <Build Include="Storage\File\01MeDriAnchor_Current.sql" />
     <Build Include="MeDriAnchor\Tables\DBTableTie.sql">
-      <AnsiNulls>Off</AnsiNulls>
+      <AnsiNulls>On</AnsiNulls>
     </Build>
     <Build Include="MeDriAnchor\Tables\DBTableTieColumns.sql">
-      <AnsiNulls>Off</AnsiNulls>
+      <AnsiNulls>On</AnsiNulls>
     </Build>
     <Build Include="MeDriAnchor\Tables\DBTableTieColumns_Shadow.sql">
       <AnsiNulls>On</AnsiNulls>
@@ -495,7 +494,6 @@
     <Build Include="MeDriAnchor\Tables\DBTableColumnTests.sql" />
     <Build Include="MeDriAnchor\Stored Procedures\sspAddDBTableColumnTest.sql" />
     <Build Include="MeDriAnchor\Stored Procedures\sspCreateDWHTests.sql" />
-    <Build Include="MeDriAnchor\Stored Procedures\sspAddDBTest.sql" />
     <Build Include="MeDriAnchor\Stored Procedures\sspSynchLocalLookups.sql" />
     <Build Include="MeDriAnchor\Stored Procedures\sspAddKnot.sql" />
     <Build Include="dbo\Views\vIndexDetails.sql">
@@ -506,6 +504,13 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="MeDriAnchor\Stored Procedures\sspAddDBTest.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
+    <None Include="PostDeploy\03CreateTests.sql" />
+    <None Include="PostDeploy\25PopulateMeDriAnchorAW2008.sql" />
+    <None Include="PostDeploy\50CreateSourceSynonyms.sql" />
+    <Build Include="MeDriAnchor\Views\svEnvironmentSchemas.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="MeDriAnchor.refactorlog" />
@@ -517,9 +522,7 @@
     <None Include="PostDeploy\00RunTodoc.sql" />
     <None Include="PostDeploy\01LoadMeDriAnchorDefaultData.sql" />
     <None Include="PostDeploy\02LoadMeDriAnchorDefaultServersAndDBs.sql" />
-    <None Include="PostDeploy\05CreateSourceSynonyms.sql" />
     <None Include="Scratch.sql" />
-    <None Include="PostDeploy\06DWHTests.sql" />
     <None Include="MeDriAnchorMail.sql" />
     <None Include="DWHMaintenance.ps1" />
     <None Include="ETLRunScheduledTask.xml" />

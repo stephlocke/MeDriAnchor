@@ -8,7 +8,8 @@
 @DBIsSource BIT,
 @DBIsDestination BIT,
 @Environment_ID SMALLINT,
-@StageData BIT,
+@StageData BIT = 0,
+@UseSchemaPromotion BIT = 0,
 @DBID BIGINT OUTPUT
 )
 AS
@@ -21,7 +22,7 @@ IF NOT EXISTS (SELECT * FROM [MeDriAnchor].[DBServer] WHERE [DBServerID] = @DBSe
 	THROW 51000, 'Invalid @DBServerID.', 1;
 
 -- validate the environment id is valid
-IF NOT EXISTS (SELECT * FROM [MeDriAnchor].[Environment] WHERE [Environment_ID] = @Environment_ID)
+IF @Environment_ID IS NOT NULL AND NOT EXISTS (SELECT * FROM [MeDriAnchor].[Environment] WHERE [Environment_ID] = @Environment_ID)
 	THROW 51000, 'Invalid @Environment_ID.', 1;
 
 BEGIN TRAN;
@@ -42,7 +43,8 @@ BEGIN TRY
 			[DBIsSource],
 			[DBIsDestination],
 			[Environment_ID],
-			[StageData]
+			[StageData],
+			[UseSchemaPromotion]
 			)
 		SELECT
 			@DBServerID,
@@ -53,7 +55,8 @@ BEGIN TRY
 			@DBIsSource, -- 1 if a source
 			@DBIsDestination, -- 1 if a destination (DWH)
 			@Environment_ID,
-			@StageData;
+			@StageData,
+			@UseSchemaPromotion;
 
 		SET @DBID = SCOPE_IDENTITY();
 

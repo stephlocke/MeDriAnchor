@@ -40,7 +40,8 @@ BEGIN
 
 	SELECT @DestinationDB = [DBName]
 	FROM [MeDriAnchor].[DB]
-	WHERE [DBIsDestination] = 1;
+	WHERE [DBIsDestination] = 1
+		AND ([Environment_ID] = @Environment_ID OR [Environment_ID] IS NULL);
 
 	-- Translate the tie name into our Mnemonic
 	SELECT @TieMnemonic = [TieMnemonic]
@@ -72,7 +73,7 @@ BEGIN
 			(CASE WHEN tt.[KnotMnemonic] <> '' THEN tie.[KnotMnemonic] ELSE ttc.[AnchorMnemonicRef] END) 
 				+ '_' + @identitySuffix + '_' + ttc.[RoleName] AS [TieDBColumnName],
 			tie.[DBTableColumnName] AS [SourceDBColumnName],
-			COALESCE(pk.[DBTableColumnName], tie.[DBTableColumnName]) AS [SourcePKColumnName],
+			tie.[DBTableColumnName] AS [SourcePKColumnName],
 			ttc.[TieJoinOrder],
 			ttc.[TieJoinColumn],
 			tt.[IsHistorised],
@@ -96,19 +97,15 @@ BEGIN
 	INNER JOIN [MeDriAnchor].[DBTableColumn] tie
 		ON ttc.[DBTableColumnID] = tie.[DBTableColumnID]
 	LEFT OUTER JOIN [MeDriAnchor].[DBTableColumn] tiejc
-		ON tie.[DBTableID] = tiejc.[DBTableID]
+		ON tiejc.[DBTableID] = tiejc.[DBTableID]
 		AND ttc.[TieJoinColumn] = tiejc.[DBTableColumnName]
 	INNER JOIN [MeDriAnchor].[DBTable] t
 		ON tie.[DBTableID] = t.[DBTableID]
 	INNER JOIN [MeDriAnchor].[DB] db
 		ON t.[DBID] = db.[DBID]
-	LEFT OUTER JOIN [MeDriAnchor].[DBTableColumn] pk
-		ON t.[DBTableID] = pk.[DBTableID]
-		AND pk.[PKColumn] = 1
-		AND pk.[PKColOrdinal] = 1
 	WHERE (tt.[TieMnemonic] = @TieMnemonic)
 		AND (tt.[KnotMnemonic] = '' OR (tt.[KnotMnemonic] <> '' AND tie.[PKColumn] = 1))
-		AND tie.[Environment_ID] = @Environment_ID;
+		AND tie.[Environment_ID] >= @Environment_ID;
 
 	RETURN;
 

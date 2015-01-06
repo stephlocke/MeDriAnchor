@@ -20,7 +20,8 @@
 @J2RoleName NVARCHAR(50),
 @J2TieJoinOrder SMALLINT = 2,
 @J2TieJoinColumn SYSNAME,
-@J2IsIdentity BIT = 1
+@J2IsIdentity BIT = 1,
+@Environment_ID SMALLINT
 )
 AS
 SET NOCOUNT ON;
@@ -63,11 +64,13 @@ BEGIN TRY
 		-- add the tie
 		INSERT INTO [MeDriAnchor].[DBTableTie]
 			(
-			[TieMnemonic]
+			[TieMnemonic],
+			[Environment_ID]
 			)
 		VALUES
 			(
-			@TieMnemonic
+			@TieMnemonic,
+			@Environment_ID
 			);
 
 		SET @TieID = SCOPE_IDENTITY();

@@ -8,7 +8,8 @@
 @AnchorMnemonicRef NVARCHAR(3),
 @AttributeMnemonic NVARCHAR(7),
 @KnotMnemonic NVARCHAR(7) = '',
-@CreateNCIndexInDWH BIT = 0
+@CreateNCIndexInDWH BIT = 0,
+@Environment_ID SMALLINT
 )
 AS
 SET NOCOUNT ON;
@@ -35,7 +36,8 @@ BEGIN TRY
 		[AttributeMnemonic] = @AttributeMnemonic,
 		[AnchorMnemonicRef] = @AnchorMnemonicRef,
 		[KnotMnemonic] = @KnotMnemonic,
-		[CreateNCIndexInDWH] = @CreateNCIndexInDWH
+		[CreateNCIndexInDWH] = @CreateNCIndexInDWH,
+		[Environment_ID] = @Environment_ID
 	WHERE [DBTableID] = @DBTableID
 		AND [DBTableColumnName] = @DBTableColumnName
 		AND

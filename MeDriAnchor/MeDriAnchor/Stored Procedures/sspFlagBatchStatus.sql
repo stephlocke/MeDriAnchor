@@ -12,6 +12,7 @@ DECLARE @ValidationFailures BIGINT;
 DECLARE @RecordCount BIGINT;
 DECLARE @ErrorCount BIGINT;
 DECLARE @MetadataChange BIT = 0;
+DECLARE @SeverityWarning TINYINT = (SELECT [SeverityID] FROM [MeDriAnchor].[Severity] WHERE [ServerityName] = 'WARNING');
 
 BEGIN TRAN;
 
@@ -43,25 +44,37 @@ BEGIN TRY
 		-- issues (non-info and validation messages present)
 		UPDATE [MeDriAnchor].[Batch] SET [BatchSuccessful] = 0, [InProgress] = 0 WHERE [Batch_ID] = @Batch_ID;
 
-		EXEC msdb.dbo.sp_send_dbmail 
-			@profile_name = 'CROW Mail', 
-			@recipients = 'james.skipwith@OPTIMUMCREDIT.co.uk;stephanie.locke@optimumcredit.co.uk', 
-			@subject = 'CROW ETL Batch: Failure', 
-			@body = @Body, 
-			@body_format = 'text';
+		BEGIN TRY
+			EXEC msdb.dbo.sp_send_dbmail 
+				@profile_name = 'CROW Mail', 
+				@recipients = 'james.skipwith@OPTIMUMCREDIT.co.uk;stephanie.locke@optimumcredit.co.uk', 
+				@subject = 'CROW ETL Batch: Failure', 
+				@body = @Body, 
+				@body_format = 'text';
+		END TRY
+		BEGIN CATCH
+			INSERT INTO [MeDriAnchor].[EventAlerts]([Batch_ID], [SeverityID], [AlertMessage], [AlertDate])
+			VALUES (@Batch_ID, @SeverityWarning, 'Unable to send batch failure email', GETDATE());
+		END CATCH
 
 	END
 	ELSE
 	BEGIN
-		-- success (all info and validation messages)
+		-- success (all info, validation, or warning messages)
 		UPDATE [MeDriAnchor].[Batch] SET [BatchSuccessful] = 1, [InProgress] = 0 WHERE [Batch_ID] = @Batch_ID;
 
-		EXEC msdb.dbo.sp_send_dbmail 
-			@profile_name = 'CROW Mail', 
-			@recipients = 'james.skipwith@OPTIMUMCREDIT.co.uk;stephanie.locke@optimumcredit.co.uk', 
-			@subject = 'CROW ETL Batch: Success', 
-			@body = @Body, 
-			@body_format = 'text';
+		BEGIN TRY
+			EXEC msdb.dbo.sp_send_dbmail 
+				@profile_name = 'CROW Mail', 
+				@recipients = 'james.skipwith@OPTIMUMCREDIT.co.uk;stephanie.locke@optimumcredit.co.uk', 
+				@subject = 'CROW ETL Batch: Success', 
+				@body = @Body, 
+				@body_format = 'text';
+		END TRY
+		BEGIN CATCH
+			INSERT INTO [MeDriAnchor].[EventAlerts]([Batch_ID], [SeverityID], [AlertMessage], [AlertDate])
+			VALUES (@Batch_ID, @SeverityWarning, 'Unable to send batch success email', GETDATE());
+		END CATCH
 
 	END
 

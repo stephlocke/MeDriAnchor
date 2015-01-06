@@ -1,4 +1,4 @@
-﻿CREATE VIEW [DwhDev].[_Anchor]
+﻿CREATE VIEW [Dwh].[_Anchor]
 AS
 SELECT
    S.version,

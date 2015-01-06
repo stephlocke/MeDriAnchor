@@ -49,7 +49,7 @@ EXEC msdb.dbo.sp_send_dbmail
 	@profile_name = 'MeDriAnchor Mail', 
 	@recipients = 'example@example.co.uk', 
 	@subject = '{Subject}', 
-	@body = '{Body} gg', 
+	@body = '{Body}', 
 	@body_format = 'text';
 
 /*

@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [MeDriAnchor].[fnGetAttributeETLMetadata]
+﻿CREATE FUNCTION [MeDriAnchor].[fnGetAttributeETLMetadata]
 (
 @AttributeName SYSNAME,
 @Environment_ID SMALLINT
@@ -43,7 +42,8 @@ BEGIN
 
 	SELECT @DestinationDB = [DBName]
 	FROM [MeDriAnchor].[DB]
-	WHERE [DBIsDestination] = 1;
+	WHERE [DBIsDestination] = 1
+		AND ([Environment_ID] = @Environment_ID OR [Environment_ID] IS NULL);
 
 	SELECT	@metadataPrefix = MAX(CASE WHEN s.[SettingKey] = 'metadataPrefix' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
 			@encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
@@ -71,9 +71,9 @@ BEGIN
 				att.[DBTableColumnName] AS [DBTableColumnName],
 				(CASE WHEN att.[IsHistorised] = 1 THEN att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' + @changingSuffix ELSE '' END) AS [DWHTableColumnChangedAt],
 				@metadataPrefix + '_' + att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] AS [DWHTableColumnMeta],
-				ISNULL(pk.[PKColumn], 0),
-				ISNULL(pk.[PKColOrdinal], 0),
-				ISNULL(pk.[DBTableColumnName], '') AS [PKDBTableColumnName],
+				ISNULL(anch.[PKColumn], 0),
+				ISNULL(anch.[PKColOrdinal], 0),
+				ISNULL(anch.[DBTableColumnName], '') AS [PKDBTableColumnName],
 				ISNULL((SELECT TOP 1 [DBTableColumnName] FROM [MeDriAnchor].[DBTableColumn]
 				WHERE [DBTableID] = att.[DBTableID] AND [IsDatetimeComparison] = 1), '') AS [DateRestrictionColumn],
 				att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' AS [TableAttributePrefix],
@@ -102,9 +102,10 @@ BEGIN
 			ON t.[DBTableID] = pk.[DBTableID]
 			AND pk.[PKColumn] = 1
 			AND pk.[PKColOrdinal] = 1
+			AND att.[PKColumn] = 0
 		WHERE att.[IsAttribute] = 1
 			AND (att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' + COALESCE(NULLIF(anch.[DBTableColumnAlias], ''), anch.[DBTableColumnName]) + '_' + att.[DBTableColumnName]) = @AttributeName
-			AND att.[Environment_ID] = @Environment_ID;
+			AND att.[Environment_ID] >= @Environment_ID;
 	END
 	ELSE
 	BEGIN
@@ -120,9 +121,9 @@ BEGIN
 				att.[DBTableColumnName] AS [DBTableColumnName],
 				(CASE WHEN att.[IsHistorised] = 1 THEN att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' + @changingSuffix ELSE '' END) AS [DWHTableColumnChangedAt],
 				@metadataPrefix + '_' + att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] AS [DWHTableColumnMeta],
-				ISNULL(pk.[PKColumn], 0),
-				ISNULL(pk.[PKColOrdinal], 0),
-				ISNULL(pk.[DBTableColumnName], '') AS [PKDBTableColumnName],
+				ISNULL(anch.[PKColumn], 0),
+				ISNULL(anch.[PKColOrdinal], 0),
+				ISNULL(anch.[DBTableColumnName], '') AS [PKDBTableColumnName],
 				ISNULL((SELECT TOP 1 [DBTableColumnName] FROM [MeDriAnchor].[DBTableColumn]
 				WHERE [DBTableID] = att.[DBTableID] AND [IsDatetimeComparison] = 1), '') AS [DateRestrictionColumn],
 				att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' AS [TableAttributePrefix],
@@ -147,13 +148,9 @@ BEGIN
 			ON att.[DBTableID] = t.[DBTableID]
 		INNER JOIN [MeDriAnchor].[DB] db
 			ON t.[DBID] = db.[DBID]
-		LEFT OUTER JOIN [MeDriAnchor].[DBTableColumn] pk
-			ON t.[DBTableID] = pk.[DBTableID]
-			AND pk.[PKColumn] = 1
-			AND pk.[PKColOrdinal] = 1
 		WHERE att.[IsAttribute] = 1
 			AND (att.[AnchorMnemonicRef] + '_' + att.[AttributeMnemonic] + '_' + COALESCE(NULLIF(anch.[DBTableColumnAlias], ''), anch.[DBTableColumnName]) + '_' + att.[DBTableColumnName]) = @AttributeName
-			AND att.[Environment_ID] = @Environment_ID;
+			AND att.[Environment_ID] >= @Environment_ID;
 	END
 
 	RETURN;

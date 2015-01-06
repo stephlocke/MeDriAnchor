@@ -1,4 +1,4 @@
-﻿CREATE VIEW [DwhDev].[_Attribute]
+﻿CREATE VIEW [Dwh].[_Attribute]
 AS
 SELECT
    S.version,

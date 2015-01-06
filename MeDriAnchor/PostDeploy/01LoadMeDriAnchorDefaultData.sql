@@ -83,7 +83,7 @@ BEGIN
 	SELECT 'businessViews', 'true', 1 UNION ALL
 	SELECT 'databaseTarget', 'SQLServer', 1 UNION ALL
 	SELECT 'temporalization', 'uni', 1 UNION ALL
-	SELECT 'batchkillafterhours', '2', 0;
+	SELECT 'batchkillafterminutes', '60', 0;
 	--SELECT 'temporalization', 'crt', 1;
 
 	INSERT INTO [MeDriAnchor].[SettingsEnvironment]
@@ -93,9 +93,8 @@ BEGIN
 		[SettingValue],
 		[SettingInSchemaMD]
 		)
-	--SELECT @Environment_ID, 'format', '0.97', 0 UNION ALL
 	SELECT @Environment_ID, 'encapsulation', 'DwhDev', 1 UNION ALL
-	SELECT @Environment_ID, 'batchkillafterhours', '2', 0;
+	SELECT @Environment_ID, 'batchkillafterminutes', '60', 0;
 
 	SET @Environment_ID = (SELECT [Environment_ID] FROM [MeDriAnchor].[Environment] WHERE [EnvironmentName] = 'UAT');
 
@@ -106,9 +105,8 @@ BEGIN
 		[SettingValue],
 		[SettingInSchemaMD]
 		)
-	--SELECT @Environment_ID, 'format', '0.97', 0 UNION ALL
-	SELECT @Environment_ID, 'encapsulation', 'DwhUAT', 1 UNION ALL
-	SELECT @Environment_ID, 'batchkillafterhours', '2', 0;
+	SELECT @Environment_ID, 'encapsulation', 'DwhUat', 1 UNION ALL
+	SELECT @Environment_ID, 'batchkillafterminutes', '60', 0;
 
 	SET @Environment_ID = (SELECT [Environment_ID] FROM [MeDriAnchor].[Environment] WHERE [EnvironmentName] = 'PRODUCTION');
 
@@ -119,9 +117,8 @@ BEGIN
 		[SettingValue],
 		[SettingInSchemaMD]
 		)
-	--SELECT @Environment_ID, 'format', '0.97', 0 UNION ALL
 	SELECT @Environment_ID, 'encapsulation', 'Dwh', 1 UNION ALL
-	SELECT @Environment_ID, 'batchkillafterhours', '2', 0;
+	SELECT @Environment_ID, 'batchkillafterminutes', '60', 0;
 
 END
 
@@ -144,9 +141,6 @@ BEGIN
 END
 
 -- add the default server
-DECLARE @MeDriAnchorLocationType VARCHAR = 'SQLSERVER';
-DECLARE @MeDriAnchorLocation VARCHAR = 'dummysrvr\dummyinstance';
-
 IF NOT EXISTS(SELECT * FROM [MeDriAnchor].[DBServerType])
 BEGIN
 	INSERT INTO [MeDriAnchor].[DBServer]
@@ -154,8 +148,8 @@ BEGIN
 		[DBServerTypeID],
 		[ServerName]
 		)
-	SELECT	(SELECT [DBServerTypeID] FROM [MeDriAnchor].[DBServerType] WHERE [DBServerType] = @MeDriAnchorLocationType),
-			 @MeDriAnchorLocation;
+	SELECT	(SELECT [DBServerTypeID] FROM [MeDriAnchor].[DBServerType] WHERE [DBServerType] = 'SQLSERVER'),
+			'TECHNOBITCH';
 END
 GO
 

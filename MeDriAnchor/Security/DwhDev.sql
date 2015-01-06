@@ -4,26 +4,32 @@ CREATE SCHEMA [DwhDev]
 
 
 
+
+
 GO
 GRANT CONTROL
-    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT INSERT
-    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT REFERENCES
-    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT SELECT
-    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[DwhDev] TO [MeDriAnchorRole];
+
+
 

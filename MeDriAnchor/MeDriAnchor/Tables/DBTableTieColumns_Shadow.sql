@@ -10,10 +10,13 @@ CREATE TABLE [MeDriAnchor].[DBTableTieColumns_Shadow] (
     [TieJoinOrder]        SMALLINT       NOT NULL,
     [TieJoinColumn]       NVARCHAR (128) NOT NULL,
     [Metadata_ID]         BIGINT         NULL,
-    [EditingSQLUser]      [sysname]      CONSTRAINT [DF_DBTableTieColumns_Shadow_EditingSQLUser] DEFAULT (original_login()) NOT NULL,
+    [EditingSQLUser]      NVARCHAR (128) CONSTRAINT [DF_DBTableTieColumns_Shadow_EditingSQLUser] DEFAULT (original_login()) NULL,
     [EditingDate]         DATETIME       CONSTRAINT [DF_DBTableTieColumns_Shadow_EditingDate] DEFAULT (getdate()) NULL,
+    [IsIdentity]          BIT            NOT NULL,
     CONSTRAINT [PK_DBTableTieColumns_Shadow] PRIMARY KEY CLUSTERED ([DBTableTieColumnsID] ASC, [ShadowID] ASC)
 );
+
+
 
 
 GO

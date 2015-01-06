@@ -1,0 +1,1 @@
+This Adventure Works 2008 database is used in the sample post deployment markup script. You just need to restore it and alter the MeDriAnchor/PostDeploy/25PopulateMeDriAnchorAW2008.sql script accordingly to let the control database know where it is.

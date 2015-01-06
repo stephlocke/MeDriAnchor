@@ -3,9 +3,9 @@
   <PropertyGroup>
     <StartupScript>(Blank)</StartupScript>
     <StartAction>StartNone</StartAction>
-    <CreateNewDatabase>False</CreateNewDatabase>
+    <CreateNewDatabase>True</CreateNewDatabase>
     <BlockOnPossibleDataLoss>False</BlockOnPossibleDataLoss>
-    <TargetConnectionString>Data Source=stemavdj07.database.windows.net;Initial Catalog=DWH;Persist Security Info=True;User ID=optcrowadmin@stemavdj07;Pooling=False</TargetConnectionString>
+    <TargetConnectionString>Data Source=TECHNOBITCH;Initial Catalog=DWH;Integrated Security=True;Pooling=False</TargetConnectionString>
     <ScriptDatabaseOptions>True</ScriptDatabaseOptions>
     <PopulateFilesOnFileGroups>False</PopulateFilesOnFileGroups>
   </PropertyGroup>

@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[sspAddDBTest]
+﻿
+CREATE PROCEDURE [MeDriAnchor].[sspAddDBTest]
 (
 @TestName NVARCHAR(100),
 @TestType NVARCHAR(50)
