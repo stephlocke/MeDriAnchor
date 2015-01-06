@@ -16,7 +16,7 @@ SET NUMERIC_ROUNDABORT OFF;
 DECLARE @BatchTypeID SMALLINT;
 DECLARE @RunningBatchID BIGINT;
 DECLARE @RunningBatchDate DATETIME;
-DECLARE @batchkillafterhours TINYINT;
+DECLARE @batchkillafterminutes INT;
 
 SET @Metadata_ID = (SELECT MAX([Metadata_ID]) FROM [MeDriAnchor].[Metadata]);
 
@@ -36,21 +36,21 @@ BEGIN TRY
 	FROM [MeDriAnchor].[Batch] WHERE [InProgress] = 1;
 
 	-- get the batch kill after n hours value
-	SELECT @batchkillafterhours = MAX(CASE WHEN s.[SettingKey] = 'batchkillafterhours' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END)
+	SELECT @batchkillafterminutes = MAX(CASE WHEN s.[SettingKey] = 'batchkillafterminutes' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END)
 	FROM [MeDriAnchor].[Settings] s
 	LEFT OUTER JOIN [MeDriAnchor].[SettingsEnvironment] se
 		ON s.[SettingKey] = se.[SettingKey]
 		AND se.Environment_ID = @Environment_ID
-	WHERE s.[SettingKey] IN('batchkillafterhours');
+	WHERE s.[SettingKey] IN('batchkillafterminutes');
 
-	SET @batchkillafterhours = ISNULL(@batchkillafterhours, 2);
+	SET @batchkillafterminutes = ISNULL(@batchkillafterminutes, 2);
 
-	IF (@RunningBatchID IS NOT NULL AND DATEDIFF(HOUR, @RunningBatchDate, GETDATE()) < @batchkillafterhours)
+	IF (@RunningBatchID IS NOT NULL AND DATEDIFF(MINUTE, @RunningBatchDate, GETDATE()) < @batchkillafterminutes)
 	BEGIN
 		RAISERROR('Another batch is already running. Stopped.', 16, 1)
 	END
 
-	IF (@RunningBatchID IS NOT NULL AND DATEDIFF(HOUR, @RunningBatchDate, GETDATE()) > @batchkillafterhours)
+	IF (@RunningBatchID IS NOT NULL AND DATEDIFF(MINUTE, @RunningBatchDate, GETDATE()) > @batchkillafterminutes)
 	BEGIN
 		-- batch over two hours old so stop it
 		UPDATE [MeDriAnchor].[Batch] SET 
@@ -120,7 +120,9 @@ BEGIN TRY
 		AND b.[InProgress] = 0
 	ORDER BY etlr.[Batch_ID] DESC;
 
-	IF (@Batch_ID_Previous IS NULL OR NOT EXISTS(SELECT * FROM [MeDriAnchor].[ETLRunOrder]))
+	IF (@Batch_ID_Previous IS NULL OR NOT EXISTS(SELECT * FROM [MeDriAnchor].[ETLRunOrder] ero
+		INNER JOIN [MeDriAnchor].[ETLRun] er ON er.[ETLRun_ID] = ero.[ETLRun_ID]
+		WHERE er.[Environment_ID] = @Environment_ID))
 	BEGIN
 		SET @MetadataChanged = 1;
 	END
@@ -148,7 +150,7 @@ BEGIN TRY
 	END
 	ELSE
 	BEGIN
-		-- link together as an ETL run (using the run details from th elast previous successfull run for this environment and metadata id
+		-- link together as an ETL run (using the run details from the last previous successfull run for this environment and metadata id
 		SET @ETLRun_ID_Used = 
 			(
 			SELECT MAX(er.[ETLRun_ID]) -- last run for this metadata and environment

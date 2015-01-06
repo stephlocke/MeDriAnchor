@@ -19,7 +19,7 @@ BEGIN TRY
 	INNER JOIN [MeDriAnchor].[DBServer] srv
 		ON srv.[DBServerID] = db.[DBServerID]
 	WHERE db.[DBID] = @DBID
-		AND (db.[Environment_ID] IS NULL OR db.[Environment_ID] = @Environment_ID);
+		AND (db.[Environment_ID] = @Environment_ID OR db.[Environment_ID] IS NULL);
 
 	SET @SQL = 
 	'

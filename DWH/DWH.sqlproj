@@ -23,6 +23,7 @@
     <SqlServerVerification>True</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DacVersion>1.1.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -68,12 +69,20 @@
     <Folder Include="Security\Logins" />
     <Folder Include="Dwh\Tables" />
     <Folder Include="Dwh\Functions" />
+    <Folder Include="DwhUat" />
+    <Folder Include="DwhUat\Functions" />
+    <Folder Include="DwhUat\Tables" />
+    <Folder Include="DwhUat\Views" />
+    <Folder Include="DwhDev" />
+    <Folder Include="DwhDev\Functions" />
+    <Folder Include="DwhDev\Tables" />
+    <Folder Include="DwhDev\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Stored Procedures\sspGenerateDWHIndexes.sql" />
     <Build Include="Security\Schemas\Dwh.sql" />
     <Build Include="Security\Schemas\DwhDev.sql" />
-    <Build Include="Security\Schemas\DwhUAT.sql" />
+    <Build Include="Security\Schemas\DwhUat.sql" />
     <Build Include="Security\Schemas\MeDriAnchor.sql" />
     <Build Include="dbo\Stored Procedures\sspDropAllTriggers.sql" />
     <Build Include="Security\Users\MeDriAnchorUser.sql" />
@@ -89,15 +98,34 @@
     <Build Include="Dwh\Functions\fnGetLatestMDVersion.sql" />
     <Build Include="dbo\Stored Procedures\sspIndexMaintenance.sql" />
     <Build Include="dbo\Stored Procedures\sspStatisticsMaintenance.sql" />
+    <Build Include="DwhUat\Functions\fnGetLatestMDVersion.sql" />
+    <Build Include="DwhUat\Tables\_Schema.sql" />
+    <Build Include="DwhUat\Views\_Anchor.sql" />
+    <Build Include="DwhUat\Views\_Attribute.sql" />
+    <Build Include="DwhUat\Views\_Knot.sql" />
+    <Build Include="DwhUat\Views\_Schema_Expanded.sql" />
+    <Build Include="DwhUat\Views\_Tie.sql" />
+    <Build Include="DwhDev\Functions\fnGetLatestMDVersion.sql" />
+    <Build Include="DwhDev\Tables\_Schema.sql" />
+    <Build Include="DwhDev\Views\_Anchor.sql" />
+    <Build Include="DwhDev\Views\_Attribute.sql" />
+    <Build Include="DwhDev\Views\_Knot.sql" />
+    <Build Include="DwhDev\Views\_Schema_Expanded.sql" />
+    <Build Include="DwhDev\Views\_Tie.sql" />
+    <Build Include="dbo\Stored Procedures\sspPromoteAnchorTable.sql" />
+    <Build Include="dbo\Stored Procedures\sspPromoteAllSchemaObjects.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scratch.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="DWH.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\Azure\SqlSchemas\master.dacpac">
       <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\Azure\SqlSchemas\master.dacpac</HintPath>
-      <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
+      <SuppressMissingDependenciesErrors>True</SuppressMissingDependenciesErrors>
       <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
     </ArtifactReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Scratch.sql" />
   </ItemGroup>
 </Project>

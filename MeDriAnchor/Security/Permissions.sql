@@ -20,6 +20,7 @@ GRANT CREATE VIEW TO [MeDriAnchorRole]
 
 GO
 GRANT REFERENCES
-    ON SCHEMA::[dbo] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[dbo] TO [MeDriAnchorRole];
+
+
 

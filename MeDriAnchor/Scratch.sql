@@ -27,31 +27,12 @@ WHERE gss.[NewID] IS NULL
 	AND nid.[GUID] = gs.[GUID]
 WHERE gs.[NewID] IS NULL;
 
--- mass constraint drop
-DECLARE @SQL NVARCHAR(MAX) = '';
 
-SELECT @SQL += 'ALTER TABLE ' + ccu.TABLE_SCHEMA + '.' + ccu.TABLE_NAME + ' DROP CONSTRAINT ' +  cc.CONSTRAINT_NAME + ';' + CHAR(10) + 'GO' + CHAR(10)
-FROM            INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
-INNER JOIN [INFORMATION_SCHEMA].[CONSTRAINT_COLUMN_USAGE] ccu
-	ON ccu.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
-WHERE        (cc.CHECK_CLAUSE LIKE '%[DWHDev]%')
-
-SELECT CONVERT(XML, @SQL);
-
--- table schema transfer
-DECLARE @SQL NVARCHAR(MAX) = '';
-
-SELECT @SQL += 'ALTER SCHEMA [Dwh] TRANSFER ' + [TABLE_SCHEMA] + '.' + [TABLE_NAME] + ';' + CHAR(10)
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA = 'DwhDev'
-AND TABLE_TYPE = 'BASE TABLE';
-
-SELECT CONVERT(XML, @SQL);
 
 -- move from dev to live
 UPDATE [MeDriAnchor].[DBTableColumn] SET Environment_ID = 3
 WHERE [DBTableColumnID] IN
-(SELECT [DBTableColumnID] FROM [MeDriAnchor].[svTableColumnsWithMetadata]);
+(SELECT [DBTableColumnID] FROM [MeDriAnchor].[svTableColumnsWithMetadata] WHERE Environment_ID = 1);
 
 
 -- useful alert table queries

@@ -17,11 +17,11 @@ Post-Deployment Script Template
 
 :r .\PostDeploy\02LoadMeDriAnchorDefaultServersAndDBs.sql
 
-:r .\PostDeploy\03PopulateMeDriAnchorAGateway.sql
+:r .\PostDeploy\03CreateTests.sql
 
-:r .\PostDeploy\05CreateSourceSynonyms.sql
+:r .\PostDeploy\25PopulateMeDriAnchorAW2008.sql
 
-:r .\PostDeploy\06DWHTests.sql
+:r .\PostDeploy\50CreateSourceSynonyms.sql
 
 
 

@@ -11,8 +11,11 @@ CREATE TABLE [MeDriAnchor].[DBTableTie_Shadow] (
     [Metadata_ID]    BIGINT         NULL,
     [EditingSQLUser] NVARCHAR (128) CONSTRAINT [DF_DBTableTie_Shadow_EditingSQLUser] DEFAULT (original_login()) NULL,
     [EditingDate]    DATETIME       CONSTRAINT [DF_DBTableTie_Shadow_EditingDate] DEFAULT (getdate()) NULL,
+    [Environment_ID] SMALLINT       NOT NULL,
     CONSTRAINT [PK_DBTableTie_Shadow] PRIMARY KEY CLUSTERED ([TieID] ASC, [ShadowID] ASC)
 );
+
+
 
 
 

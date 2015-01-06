@@ -1,4 +1,4 @@
-﻿CREATE VIEW [DwhDev].[_Schema_Expanded]
+﻿CREATE VIEW [Dwh].[_Schema_Expanded]
 AS
 SELECT
 	[version],

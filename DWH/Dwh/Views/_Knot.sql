@@ -1,4 +1,4 @@
-﻿CREATE VIEW [DwhDev].[_Knot]
+﻿CREATE VIEW [Dwh].[_Knot]
 AS
 SELECT
    S.version,

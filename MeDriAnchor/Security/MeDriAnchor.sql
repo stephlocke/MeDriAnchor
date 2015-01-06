@@ -5,26 +5,32 @@ CREATE SCHEMA [MeDriAnchor]
 
 
 
+
+
 GO
 GRANT CONTROL
-    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT INSERT
-    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT REFERENCES
-    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole];
+
+
 
 
 GO
 GRANT SELECT
-    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole]
-    AS [dbo];
+    ON SCHEMA::[MeDriAnchor] TO [MeDriAnchorRole];
+
+
 

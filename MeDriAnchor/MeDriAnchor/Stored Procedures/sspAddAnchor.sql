@@ -8,7 +8,8 @@
 @AnchorMnemonic NVARCHAR(3),
 @PKColumn BIT = 1,
 @PKColOrdinal BIT = 1,
-@DBTableColumnNameDateComp SYSNAME = ''
+@DBTableColumnNameDateComp SYSNAME = '',
+@Environment_ID SMALLINT
 )
 AS
 SET NOCOUNT ON;
@@ -41,7 +42,8 @@ BEGIN TRY
 		[AnchorMnemonic] = @AnchorMnemonic,
 		[PKColumn] = @PKColumn,
 		[PKColOrdinal] = @PKColOrdinal,
-		[DBTableColumnAlias] = @DBTableColumnAlias
+		[DBTableColumnAlias] = @DBTableColumnAlias,
+		[Environment_ID] = @Environment_ID
 	WHERE [DBTableID] = @DBTableID
 		AND [DBTableColumnName] = @DBTableColumnName
 		AND 
@@ -57,7 +59,8 @@ BEGIN TRY
 	IF (@DBTableColumnNameDateComp <> '')
 	BEGIN
 		UPDATE [MeDriAnchor].[DBTableColumn] SET 
-			[IsDatetimeComparison] = 1
+			[IsDatetimeComparison] = 1,
+			[Environment_ID] = @Environment_ID
 		WHERE [DBTableID] = @DBTableID
 			AND [DBTableColumnName] = @DBTableColumnNameDateComp
 			AND [IsDatetimeComparison] = 0;

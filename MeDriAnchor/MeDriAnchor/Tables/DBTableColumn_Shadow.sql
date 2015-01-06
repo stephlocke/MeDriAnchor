@@ -43,14 +43,16 @@ CREATE TABLE [MeDriAnchor].[DBTableColumn_Shadow] (
     [TestColumnFunction]         NVARCHAR (128) NOT NULL,
     [IsActive]                   BIT            NOT NULL,
     [Metadata_ID]                BIGINT         NULL,
-	[SwapIfGUID]				 BIT			NULL,
+    [SwapIfGUID]                 BIT            NOT NULL,
     [EditingSQLUser]             NVARCHAR (128) CONSTRAINT [DF_DBTableColumn_Shadow_EditingSQLUser] DEFAULT (original_login()) NULL,
     [EditingDate]                DATETIME       CONSTRAINT [DF_DBTableColumn_Shadow_EditingDate] DEFAULT (getdate()) NULL,
-	[TestValue1] SQL_VARIANT NULL,
-	[TestValue2] SQL_VARIANT NULL,
-	[TestLkpDBTableColumnID] BIGINT NULL,
+    [TestValue1]                 SQL_VARIANT    NULL,
+    [TestValue2]                 SQL_VARIANT    NULL,
+    [TestLkpDBTableColumnID]     BIGINT         NULL,
     CONSTRAINT [PK_DBTableColumn_Shadow] PRIMARY KEY CLUSTERED ([DBTableColumnID] ASC, [ShadowID] ASC) ON [MeDriAnchor_Current]
 );
+
+
 
 
 

@@ -40,7 +40,7 @@ BEGIN TRY
 
 	-- clear the old mappings
 	DELETE FROM [MeDriAnchor].[_AnchorToMetadataMap] 
-	WHERE [Metadata_ID] <= @Metadata_ID 
+	WHERE [Metadata_ID] <= @Metadata_ID
 		AND [Environment_ID] = @Environment_ID;
 
 	SELECT @encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END)
@@ -299,7 +299,7 @@ BEGIN TRY
 						QUOTENAME([DBTableSchema]),
 						[DBTableName],
 						QUOTENAME([SourcePKColumnName]),
-						QUOTENAME([DWHDBTableSchema]) + '.' + [DWHDBTableName],
+						[DWHDBTableName],
 						QUOTENAME([TieDBColumnName]),
 						[TieJoinOrder],
 						(CASE WHEN [TieJoinColumn] <> '' THEN QUOTENAME([TieJoinColumn]) ELSE '' END),

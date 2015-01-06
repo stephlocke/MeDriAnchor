@@ -1,14 +1,12 @@
-﻿CREATE TABLE [MeDriAnchor].[DBTableColumnTest]
-(
-	[DBTableColumnTestID] INT IDENTITY (1, 1) NOT NULL,
-	[TestName] NVARCHAR(100) NOT NULL,
-	[TestType] NVARCHAR(50) 
-		CONSTRAINT [CHK_DBTableColumnTest_DBTableColumnTestType] CHECK([TestType] IN('BETWEEN (NUMERIC)', 
-		'BETWEEN (YEARS FROM VALUE)', '>', '>=', '<', '<=', 'IS NOT NULL',
-		'IS NOT BLANK','IS NUMERIC','<> (STRING)','ISVALID (LOOKUP STRING)',
-		'> (LENGTH STRING)')) NOT NULL, 
-    CONSTRAINT [PK_DBTableColumnTest] PRIMARY KEY CLUSTERED ([DBTableColumnTestID] ASC)
+﻿CREATE TABLE [MeDriAnchor].[DBTableColumnTest] (
+    [DBTableColumnTestID] INT            IDENTITY (1, 1) NOT NULL,
+    [TestName]            NVARCHAR (100) NOT NULL,
+    [TestType]            NVARCHAR (50)  NOT NULL,
+    CONSTRAINT [PK_DBTableColumnTest] PRIMARY KEY CLUSTERED ([DBTableColumnTestID] ASC),
+    CONSTRAINT [CHK_DBTableColumnTest_DBTableColumnTestType] CHECK ([TestType]='> (LENGTH STRING)' OR [TestType]='ISVALID (LOOKUP STRING)' OR [TestType]='<> (STRING)' OR [TestType]='IS NUMERIC' OR [TestType]='IS NOT BLANK' OR [TestType]='IS NOT NULL' OR [TestType]='<=' OR [TestType]='<' OR [TestType]='>=' OR [TestType]='>' OR [TestType]='BETWEEN (YEARS FROM VALUE)' OR [TestType]='BETWEEN (NUMERIC)')
 );
+
+
 
 
 

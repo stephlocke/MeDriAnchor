@@ -3,9 +3,9 @@
 @Environment_ID SMALLINT,
 @DBID BIGINT = NULL,
 @Debug BIT = 0, -- if 0 then generates the procedures and runs, if 1 generates the procedures but doesn't run
-@ETLRun_ID BIGINT OUTPUT,
-@Metadata_ID BIGINT OUTPUT,
-@Batch_ID BIGINT OUTPUT
+@ETLRun_ID BIGINT,
+@Metadata_ID BIGINT,
+@Batch_ID BIGINT
 )
 AS
 SET NUMERIC_ROUNDABORT OFF;
@@ -19,6 +19,7 @@ DECLARE @ProcedureName SYSNAME;
 DECLARE @ToMake TABLE
 	(
 	[Type] NVARCHAR(2),
+	[capsule] NVARCHAR(MAX),
 	[Name] NVARCHAR(MAX),
 	[KnotRange] NVARCHAR(7),
 	[RunOrder] INT PRIMARY KEY CLUSTERED
@@ -27,12 +28,14 @@ DECLARE @RunOrder INT;
 DECLARE @SQL NVARCHAR(MAX) = '';
 DECLARE @encapsulation NVARCHAR(100);
 DECLARE @KnotRange NVARCHAR(7);
+DECLARE @capsule SYSNAME;
 DECLARE @KnotName SYSNAME;
 DECLARE @KnotSQL NVARCHAR(MAX) = '';
 DECLARE @knotParams NVARCHAR(1000) = N'@KnotName SYSNAME OUTPUT';
 DECLARE @MetadataChanged BIT = 0;
 DECLARE @GenerateErrorMessage NVARCHAR(4000) = '';
 DECLARE @StageData BIT;
+DECLARE @MultiDWHDBs BIT = 0;
 
 BEGIN TRY
 
@@ -41,9 +44,13 @@ BEGIN TRY
 		SELECT	@DBID = [DBID],
 				@StageData = [StageData]
 		FROM [MeDriAnchor].[DB] 
-		WHERE ([Environment_ID] IS NULL 
-			OR [Environment_ID] = @Environment_ID);
+		WHERE [DBIsDestination] = 1
+			AND ([Environment_ID] = @Environment_ID OR [Environment_ID] IS NULL);
 	END
+
+	-- Are we only using one DWH destination? If so we can restrict the environment runs to just the environment objects
+	IF ((SELECT COUNT(*) FROM [MeDriAnchor].[DB] WHERE [DBIsDestination] = 1) > 1)
+		SET @MultiDWHDBs = 1;
 
 	-- get the DWH schema to use
 	SELECT @encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END)
@@ -57,9 +64,10 @@ BEGIN TRY
 
 	-- Get the Anchor objects to (re)create
 	-- Knots -> Anchors -> Attributes -> Ties
-	SET @SQL += 'SELECT  [Type], [Name], [KnotRange], ROW_NUMBER() OVER (ORDER BY (CASE [Type] WHEN ''KN'' THEN 1 WHEN ''AN'' THEN 2 WHEN ''AT'' THEN 3 WHEN ''TI'' THEN 4 END), [Name]) AS [RunOrder] FROM ' + QUOTENAME(@encapsulation) + '.[_AnchorObjects];' + CHAR(13)
+	SET @SQL += 'SELECT  [Type], [capsule], [Name], [KnotRange], ROW_NUMBER() OVER (ORDER BY (CASE [Type] WHEN ''KN'' THEN 1 WHEN ''AN'' THEN 2 WHEN ''AT'' THEN 3 WHEN ''TI'' THEN 4 END), [Name]) AS [RunOrder] FROM ' + QUOTENAME(@encapsulation) + '.[_AnchorObjects]' + CHAR(10);
+	SET @SQL += (CASE WHEN @MultiDWHDBs = 0 THEN 'WHERE [capsule] = ''' + @encapsulation + ''';' ELSE ';' END);
 	
-	INSERT INTO @ToMake([Type], [Name], [KnotRange], [RunOrder])
+	INSERT INTO @ToMake([Type], [capsule], [Name], [KnotRange], [RunOrder])
 	EXEC (@SQL);
 
 	-- (re)create the knots
@@ -67,6 +75,7 @@ BEGIN TRY
 	READ_ONLY FORWARD_ONLY STATIC LOCAL
 	FOR 
 	SELECT	[Type],
+			[capsule],
 			[Name],
 			[KnotRange],
 			[RunOrder]
@@ -75,7 +84,7 @@ BEGIN TRY
 
 	OPEN ProcCreate;
 
-	FETCH NEXT FROM ProcCreate INTO @Type, @Name, @KnotRange, @RunOrder;
+	FETCH NEXT FROM ProcCreate INTO @Type, @capsule, @Name, @KnotRange, @RunOrder;
 	WHILE (@@fetch_status <> -1)
 	BEGIN
 		IF (@@fetch_status <> -2)
@@ -340,19 +349,21 @@ BEGIN TRY
 					(
 					[ETLRun_ID],
 					[SPOrder],
-					[SPName]
+					[SPName],
+					[SPSchema]
 					)
 				VALUES
 					(
 					@ETLRun_ID,
 					@RunOrder,
-					@ProcedureName
+					@ProcedureName,
+					@capsule
 					);
 
 			END
 
 		END
-		FETCH NEXT FROM ProcCreate INTO @Type, @Name, @KnotRange, @RunOrder;
+		FETCH NEXT FROM ProcCreate INTO @Type, @capsule, @Name, @KnotRange, @RunOrder;
 	END
 
 	CLOSE ProcCreate;

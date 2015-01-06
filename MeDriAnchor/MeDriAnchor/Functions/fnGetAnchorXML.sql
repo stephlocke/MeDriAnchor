@@ -1,5 +1,4 @@
-﻿
-CREATE FUNCTION [MeDriAnchor].[fnGetAnchorXML](@Environment_ID SMALLINT) 
+﻿CREATE FUNCTION [MeDriAnchor].[fnGetAnchorXML](@Environment_ID SMALLINT) 
 RETURNS XML
 AS
 BEGIN
@@ -42,11 +41,13 @@ BEGIN
 					ISNULL((SELECT [DataType] FROM [MeDriAnchor].[DBTableColumn] WHERE [KnotMnemonic] = t.[KnotMnemonic] AND [IdentityColumn] = 1), 'int') AS "@identity",
 					t.[DataType] AS "@dataRange",
 					(
-					SELECT	@encapsulation AS "@capsule",
+					SELECT	tsch.[Encapsulation] AS "@capsule",
 							(CASE t.[GenerateID] WHEN 1 THEN 'true' ELSE 'false' END) AS "@generator"
 					FOR XML PATH('metadata'), TYPE
 					)
 			FROM [MeDriAnchor].[DBTableColumn] t
+			INNER JOIN [MeDriAnchor].[svEnvironmentSchemas] tsch
+				ON t.[Environment_ID] = tsch.[Environment_ID]
 			WHERE t.[IsKnot] = 1
 				AND t.[IdentityColumn] = 0
 			ORDER BY t.[DBTableID], t.[DBTableColumnName]
@@ -58,7 +59,7 @@ BEGIN
 					COALESCE(NULLIF(t.[DBTableColumnAlias], ''), t.[DBTableColumnName]) AS "@descriptor",
 					[DataType] AS "@identity",
 					(
-					SELECT	@encapsulation AS "@capsule",
+					SELECT	tsch.[Encapsulation] AS "@capsule",
 							(CASE WHEN t.[GenerateID] = 0 THEN 'false' ELSE 'true' END) AS "@generator"
 					FOR XML PATH('metadata'), TYPE
 					),
@@ -70,19 +71,25 @@ BEGIN
 							[DataType] AS "@dataRange",
 							NULLIF(att.[KnotMnemonic], '') AS "@knotRange",
 							(
-							SELECT	@encapsulation AS "@capsule",
+							SELECT	tschatt.[Encapsulation] AS "@capsule",
 									@restatable AS "@restatable", 
 									@idempotent AS "@idempotent"
 							FOR XML PATH('metadata'), TYPE
 							)
 					FROM [MeDriAnchor].[DBTableColumn] att
+					INNER JOIN [MeDriAnchor].[svEnvironmentSchemas] tschatt
+						ON att.[Environment_ID] = tschatt.[Environment_ID]
 					WHERE att.[IsAttribute] = 1
 						AND att.[AnchorMnemonicRef] = t.AnchorMnemonic
+						AND att.[Environment_ID] >= @Environment_ID
 					ORDER BY att.[AttributeMnemonic]
 					FOR XML PATH('attribute'), TYPE
 					)
 			FROM [MeDriAnchor].[DBTableColumn] t
+			INNER JOIN [MeDriAnchor].[svEnvironmentSchemas] tsch
+				ON t.[Environment_ID] = tsch.[Environment_ID]
 			WHERE t.[IsAnchor] = 1
+				AND t.[Environment_ID] >= @Environment_ID
 			ORDER BY t.[DBTableID], t.[DBTableColumnName]
 			FOR XML PATH('anchor'), TYPE
 			),
@@ -110,10 +117,13 @@ BEGIN
 					FOR XML PATH('knotRole'), TYPE
 					),
 					(
-					SELECT	@encapsulation AS "@capsule"
+					SELECT	tschtie.[Encapsulation] AS "@capsule"
 					FOR XML PATH('metadata'), TYPE
 					)
 			FROM [MeDriAnchor].[DBTableTie] tie
+			INNER JOIN [MeDriAnchor].[svEnvironmentSchemas] tschtie
+						ON tschtie.[Environment_ID] = tie.[Environment_ID]
+			WHERE tie.[Environment_ID] >= @Environment_ID
 			FOR XML PATH('tie'), TYPE
 			)
 	FOR XML PATH('schema')

@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [DwhDev].[fnGetLatestMDVersion]()
+﻿CREATE FUNCTION [Dwh].[fnGetLatestMDVersion]()
 RETURNS INT
 AS
 BEGIN

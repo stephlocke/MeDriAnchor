@@ -17,12 +17,11 @@ BEGIN TRY
 	DECLARE LINKEDSERVERS CURSOR
 	READ_ONLY FORWARD_ONLY LOCAL
 	FOR 
-	SELECT	s.[ServerName] AS [ServerName], 
+	SELECT	s.[ServerName], 
 			st.[DBServerType], 
 			db.[DBName],
 			CONVERT(NVARCHAR(256), db.[DBUserName]) AS [DBUserName],
 			CONVERT(NVARCHAR(256), db.[DBUserPassword]) AS [DBUserPassword],
-			db.[DBIsLocal],
 			(CASE WHEN ISNULL(CONVERT(NVARCHAR(256), db.[DBUserName]), '') = ''
 				THEN st.[DBServerConnectionStringTrusted] -- no username so a trusted connection
 				ELSE st.[DBServerConnectionString] -- a username so not a trusted connection
@@ -35,11 +34,12 @@ BEGIN TRY
 	INNER JOIN [MeDriAnchor].[DBServerType] st
 		ON s.[DBServerTypeID] = st.[DBServerTypeID]
 	INNER JOIN [MeDriAnchor].[DB] db
-		ON s.[DBServerID] = db.[DBServerID];
+		ON s.[DBServerID] = db.[DBServerID]
+	WHERE db.[DBIsLocal] = 0;
 
 	OPEN LINKEDSERVERS
 
-	FETCH NEXT FROM LINKEDSERVERS INTO @ServerName, @DBServerType, @DBName, @DBUserName, @DBUserPassword, @DBIsLocal, @DBServerConnectionString, @DBIsTrusted;
+	FETCH NEXT FROM LINKEDSERVERS INTO @ServerName, @DBServerType, @DBName, @DBUserName, @DBUserPassword, @DBServerConnectionString, @DBIsTrusted;
 	WHILE (@@fetch_status <> -1)
 	BEGIN
 		IF (@@fetch_status <> -2)
@@ -54,7 +54,7 @@ BEGIN TRY
 			IF (@DBServerType = 'SQLSERVER')
 			BEGIN
 			
-				IF (@DBIsLocal = 0 AND NOT EXISTS(SELECT * FROM master.sys.servers WHERE [name] = @ServerName))
+				IF (EXISTS(SELECT * FROM master.sys.servers WHERE [name] = @ServerName))
 				BEGIN
 					EXEC master.dbo.sp_dropserver @server = @ServerName, @droplogins = 'droplogins';
 				END
@@ -100,7 +100,7 @@ BEGIN TRY
 			IF (@DBServerType = 'SQLAZURE')
 			BEGIN
 			
-				IF (NOT EXISTS(SELECT * FROM master.sys.servers WHERE [name] = @ServerName))
+				IF (EXISTS(SELECT * FROM master.sys.servers WHERE [name] = @ServerName))
 				BEGIN
 					EXEC master.dbo.sp_dropserver @server = @ServerName, @droplogins = 'droplogins';
 				END
@@ -134,7 +134,7 @@ BEGIN TRY
 			END
 
 		END
-		FETCH NEXT FROM LINKEDSERVERS INTO @ServerName, @DBServerType, @DBName, @DBUserName, @DBUserPassword, @DBIsLocal, @DBServerConnectionString, @DBIsTrusted;
+		FETCH NEXT FROM LINKEDSERVERS INTO @ServerName, @DBServerType, @DBName, @DBUserName, @DBUserPassword, @DBServerConnectionString, @DBIsTrusted;
 	END
 
 	CLOSE LINKEDSERVERS;

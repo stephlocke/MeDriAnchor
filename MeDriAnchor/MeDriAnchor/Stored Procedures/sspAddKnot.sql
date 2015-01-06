@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [MeDriAnchor].[sspAddKnot]
+﻿
+CREATE PROCEDURE [MeDriAnchor].[sspAddKnot]
 (
 @DBTableSchema SYSNAME,
 @DBTableName SYSNAME,
@@ -10,7 +11,8 @@
 @ValKnotJoinColumn SYSNAME,
 @ValTableColumnAlias SYSNAME,
 @IDDBTableColumnName SYSNAME,
-@ValDBTableColumnName SYSNAME
+@ValDBTableColumnName SYSNAME,
+@Environment_ID SMALLINT
 )
 AS
 SET NOCOUNT ON;
@@ -40,7 +42,8 @@ BEGIN TRY
 		[PKColOrdinal] = 1,
 		[KnotJoinColumn] = @IDKnotJoinColumn,
 		[GenerateID] = 0,
-		[IdentityColumn] = 1
+		[IdentityColumn] = 1,
+		[Environment_ID] = @Environment_ID
 	WHERE [DBTableID] = @DBTableID
 		AND [DBTableColumnName] = @IDDBTableColumnName;
 
@@ -52,7 +55,8 @@ BEGIN TRY
 		[PKColumn] = 0,
 		[PKColOrdinal] = 0,
 		[KnotJoinColumn] = @ValKnotJoinColumn,
-		[DBTableColumnAlias] = @ValTableColumnAlias
+		[DBTableColumnAlias] = @ValTableColumnAlias,
+		[Environment_ID] = @Environment_ID
 	WHERE [DBTableID] = @DBTableID
 		AND [DBTableColumnName] = @ValDBTableColumnName;
 

@@ -30,7 +30,8 @@ BEGIN
 
 	SELECT @DestinationDB = [DBName]
 	FROM [MeDriAnchor].[DB]
-	WHERE [DBIsDestination] = 1;
+	WHERE [DBIsDestination] = 1
+		AND ([Environment_ID] = @Environment_ID OR [Environment_ID] IS NULL);
 
 	SELECT	@metadataPrefix = MAX(CASE WHEN s.[SettingKey] = 'metadataPrefix' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
 			@encapsulation = MAX(CASE WHEN s.[SettingKey] = 'encapsulation' THEN COALESCE(se.[SettingValue], s.[SettingValue]) ELSE '' END),
@@ -63,7 +64,7 @@ BEGIN
 		ON t.[DBID] = db.[DBID]
 	WHERE tc.[IsAnchor] = 1
 		AND tc.[AnchorMnemonic] + '_' + COALESCE(NULLIF(tc.[DBTableColumnAlias], ''), tc.[DBTableColumnName]) = @AnchorName
-		AND tc.[Environment_ID] = @Environment_ID;
+		AND tc.[Environment_ID] >= @Environment_ID;
 	
 	RETURN;
 
