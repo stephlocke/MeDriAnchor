@@ -97,8 +97,8 @@ BEGIN
 	INNER JOIN [MeDriAnchor].[DBTableColumn] tie
 		ON ttc.[DBTableColumnID] = tie.[DBTableColumnID]
 	LEFT OUTER JOIN [MeDriAnchor].[DBTableColumn] tiejc
-		ON tiejc.[DBTableID] = tiejc.[DBTableID]
-		AND ttc.[TieJoinColumn] = tiejc.[DBTableColumnName]
+		ON tiejc.[DBTableID] = tie.[DBTableID]
+		AND tiejc.[DBTableColumnName] = ttc.[TieJoinColumn]
 	INNER JOIN [MeDriAnchor].[DBTable] t
 		ON tie.[DBTableID] = t.[DBTableID]
 	INNER JOIN [MeDriAnchor].[DB] db
