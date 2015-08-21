@@ -1,38 +1,27 @@
-\documentclass[a4paper]{article}
+====== Managing the ETL ======
 
-\usepackage[english]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{graphicx}
-\usepackage[colorinlistoftodos]{todonotes}
+===== Maintaining the scheduled task =====
+For the ETL to run on a regular basis, there needs to be a [[https://github.com/stephlocke/MeDriAnchor/blob/master/MeDriAnchor/ETLRunScheduledTask.xml|scheduled task]] that kicks off the [[https://github.com/stephlocke/MeDriAnchor/blob/master/MeDriAnchor/MeDriAnchorETLRun.ps1|PowerShell script]].
 
-\title{Scheduling}
+This uses a generic service account to run under, in order to prevent expiration issues and so that the user doesn't have to be logged in.
 
-\date{\today}
+Depending on execution time of the load, the scheduled task schedule may need amending. On top of amending the scheduled task, the Setting ''batchkillafterhours'' should be lengthened as this is also a factor in batch executions.
 
-\begin{document}
-\maketitle
+===== Change email alerts =====
+==== From email address ====
+This gets changed by dropping the existing SQL Server email profile and recreating with the revised info. Use the [[https://github.com/stephlocke/MeDriAnchor/blob/master/MeDriAnchor/MeDriAnchorMail.sql|Mail Template]]
 
-\section{Introduction}
+==== To email address ====
+To change the distribution of the alert, alter the [[https://github.com/stephlocke/MeDriAnchor/blob/master/MeDriAnchor/MeDriAnchor/Stored%20Procedures/sspFlagBatchStatus.sql|stored procedure]] ''sspFlagBatchStatus'' and execute it on the MeDriAnchor database.
 
-ETL in the MeDirAnchor database is done via PowerShell by default. This script can be scheduled to run at a given interval by anything that can do this. The initial MeDriAnchor database runs on SQL 2014 Express and the ETL script is scheduled to run every hour by the Windows Task Scheduler. A sample taks is oincluded in MeDriAnchor project folder (ETLRunScheduledTask.xml). The source for the Powershell running script is also in the MeDriAnchor project folder (CrowETLRun.ps1).
+===== Run a manual load =====
+A load can be manually kicked off by running the [[https://github.com/stephlocke/MeDriAnchor/blob/master/MeDriAnchor/MeDriAnchorETLRun.ps1|PowerShell ETL]] script. 
 
-\section{Configuration}
+This script can be restricted to only execute when it is running under a specific account to prevent accidental loads being kicked off. To run it in these instances, you'll need to Run As... and have the credentials to hand.
 
-The ETL running script is environment aware. In the MeDriAnchor database you can have multiple DWH destinations, one for each environment or just one for all. Each environment will create objects in it's own schema, so you simply need to configure the running script once for each environmant you wish to use.
-
-\section{Prerequisites}
-
-The only prerequisite for ETL running with PowerShell is that the machine that runs the script has PowerShell on and the permissions to run PowerShell scripts.
-
-\section{Setting up schedules}
-
-Before setting the schedules, you need to run the script for the given environment manually to see how long it takes, only then will you know what a sensible time between runs would be. There is also a setting in the settings tables that controlls after how many hours a batch should be marked as complete (to saver the process never running, as it always checks to see that no ther batch is running). When initiating a batch, the first thing that the system does is to check for in-progress batches that are over n hours old and flag them as finished, to enable other batches to then run. The default is two hours.
-
-\section{Turning them on}
-
-\section{Troubleshooting}
-
-\section{Roadmap}
-
-\end{document}
+===== Kill a load =====
+If you need to stop a load for whatever reason, then you need to Stop the scheduled task. You will also need to set the batch to no longer in progress.
+<code>
+UPDATE MeDriAnchor.Batch
+   SET InProgress = 0
+</code>
