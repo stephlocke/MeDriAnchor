@@ -1,8 +1,3 @@
----
-title: MeDriAnchor Data Sources
-author: Steph Locke
-output: html_document
----
 
 # Introduction
 
@@ -28,7 +23,7 @@ SQL Azure, MySQL (which also works for MariaDB), and PostgreSQL. If you need to 
 
 Add server types to the `[MeDriAnchor].[ServerType]` table.
 
-```{sql
+```sql
 INSERT INTO [MeDriAnchor].[DBServerType]
 	(
 	[DBServerType], 
